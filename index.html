@@ -8,17 +8,20 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">AB</a>
+            <a href="#" class="logo">Ashutosh <span class="logo-accent">Biswal</span></a>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#skills">Skills</a></li>
+                <li><a href="#lab">Lab</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="#resume-modal" class="resume-trigger resume-nav-btn"><i class="fas fa-file-pdf"></i> Resume</a></li>
+                <li><a href="#contact" class="hire-me-btn">Hire Me</a></li>
             </ul>
             <button class="mobile-menu-btn" aria-label="Toggle menu">
                 <i class="fas fa-bars"></i>
@@ -33,7 +36,7 @@
         </div>
         <div class="hero-content">
             <p class="greeting">Hello, I'm</p>
-            <h1 class="name">Ashutosh Biswal</h1>
+            <h1 class="name">Ashutosh <span class="name-accent">Biswal</span></h1>
             <h2 class="title">
                 <span class="typing-text"></span>
                 <span class="cursor">|</span>
@@ -90,6 +93,7 @@
 
     <section id="about" class="about">
         <div class="container">
+            <span class="section-pretitle">System Architect</span>
             <h2 class="section-title">About Me</h2>
             <div class="about-grid">
                 <div class="about-content">
@@ -125,6 +129,7 @@
 
     <section id="skills" class="skills">
         <div class="container">
+            <span class="section-pretitle">Core Directives</span>
             <h2 class="section-title">Tech Stack</h2>
             <div class="skills-grid">
                 <div class="skill-category">
@@ -179,8 +184,86 @@
         </div>
     </section>
 
+    <section id="lab" class="lab">
+        <div class="container">
+            <span class="section-pretitle">The Concept</span>
+            <h2 class="section-title">Engineering Intelligence</h2>
+            <p class="lab-intro">Instead of just listing projects, this is a dedicated sandbox to visualize and interact with the very systems behind the work above &mdash; a way to show not just training models, but building the infrastructure that makes them accessible and interpretable.</p>
+
+            <div class="lab-grid">
+                <div class="lab-panel lab-topology-panel">
+                    <div class="lab-panel-header">
+                        <h3><i class="fas fa-diagram-project"></i> Network Topology</h3>
+                        <span class="lab-status" id="lab-status"><span class="status-dot"></span> Status: Idle</span>
+                    </div>
+                    <div class="lab-canvas-wrapper">
+                        <div id="neural-canvas"></div>
+                        <div class="lab-layer-labels">
+                            <span>Input</span><span>Dense 1</span><span>Dense 2</span><span>Output</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab-panel lab-controls-panel">
+                    <h3><i class="fas fa-sliders-h"></i> Hyperparameters</h3>
+
+                    <div class="control-group">
+                        <div class="control-label"><span>Learning Rate</span><span class="control-value" id="lr-value">0.010</span></div>
+                        <input type="range" id="lr-slider" min="1" max="100" value="10" class="lab-slider">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label"><span>Dropout</span><span class="control-value" id="dropout-value">0.2</span></div>
+                        <input type="range" id="dropout-slider" min="0" max="80" value="20" class="lab-slider">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label"><span>Epochs</span><span class="control-value" id="epochs-value">50</span></div>
+                        <input type="range" id="epochs-slider" min="1" max="200" value="50" class="lab-slider">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label"><span>Optimizer</span></div>
+                        <select id="optimizer-select" class="lab-select">
+                            <option value="Adam">Adam</option>
+                            <option value="SGD">SGD</option>
+                            <option value="RMSprop">RMSprop</option>
+                            <option value="AdamW">AdamW</option>
+                        </select>
+                    </div>
+
+                    <button id="run-inference-btn" class="btn btn-primary lab-run-btn">
+                        <i class="fas fa-play"></i> Run Inference
+                    </button>
+                </div>
+            </div>
+
+            <div class="lab-architecture">
+                <h3 class="lab-architecture-title"><span class="title-bar"></span> Model Architecture</h3>
+                <div class="architecture-grid">
+                    <div class="architecture-card">
+                        <div class="architecture-icon"><i class="fas fa-layer-group"></i></div>
+                        <h4>Topology</h4>
+                        <p>A custom-built Three.js visualization of a live feedforward network, rendering node activations across input, hidden, and output layers in real time.</p>
+                    </div>
+                    <div class="architecture-card">
+                        <div class="architecture-icon"><i class="fas fa-wave-square"></i></div>
+                        <h4>Activation</h4>
+                        <p>Dynamic activation pulses propagate across the network on each inference pass, set against a floating coordinate system that drifts with ambient environmental noise.</p>
+                    </div>
+                    <div class="architecture-card">
+                        <div class="architecture-icon"><i class="fas fa-sliders-h"></i></div>
+                        <h4>Loss Function</h4>
+                        <p>An interactive hyperparameter sidebar simulates model tuning &mdash; Learning Rate, Dropout, Epochs, and Optimizer &mdash; reinforcing hands-on optimization expertise.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="projects" class="projects">
         <div class="container">
+            <span class="section-pretitle">Applied Intelligence</span>
             <h2 class="section-title">Featured Projects</h2>
             
             <div class="project-card featured">
@@ -309,27 +392,69 @@
 
     <section id="contact" class="contact">
         <div class="container">
+            <span class="section-pretitle">Initialize Connection</span>
             <h2 class="section-title">Get In Touch</h2>
             <p class="contact-intro">I'm always open to discussing new projects, opportunities, or collaborations. Let's build something amazing together!</p>
-            <div class="contact-info">
-                <a href="mailto:biswalashutosh168@gmail.com" class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>biswalashutosh168@gmail.com</span>
-                </a>
-            </div>
-            <div class="contact-social">
-                <a href="https://github.com/AshutoshBiswal26/" target="_blank" class="social-btn">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/ashutoshbiswal24/" target="_blank" class="social-btn">
-                    <i class="fab fa-linkedin"></i> LinkedIn
-                </a>
-                <a href="https://www.kaggle.com/ashutoshbiswal56" target="_blank" class="social-btn">
-                    <i class="fab fa-kaggle"></i> Kaggle
-                </a>
-                <a href="https://x.com/AshutoshBi24" target="_blank" class="social-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X
-                </a>
+
+            <div class="contact-grid">
+                <form id="contact-form" class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-name">Your Name</label>
+                            <input type="text" id="contact-name" name="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Your Email</label>
+                            <input type="email" id="contact-email" name="email" placeholder="john@domain.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject">Subject</label>
+                        <input type="text" id="contact-subject" name="subject" placeholder="Project Inquiry / Collaboration" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" name="message" placeholder="Tell me about your project or idea..." required></textarea>
+                    </div>
+                    <div class="form-footer">
+                        <span class="form-note"><i class="fas fa-lock"></i> Your info stays private</span>
+                        <button type="submit" class="btn btn-primary form-submit">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                    <p id="form-status" class="form-status"></p>
+                </form>
+
+                <div class="contact-side">
+                    <div class="contact-side-card">
+                        <span class="contact-side-label">Direct Contact</span>
+                        <div class="contact-item-block">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:biswalashutosh168@gmail.com">biswalashutosh168@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-side-card">
+                        <span class="contact-side-label">External Nodes</span>
+                        <div class="contact-social-list">
+                            <a href="https://github.com/AshutoshBiswal26/" target="_blank" class="social-row">
+                                <span><i class="fab fa-github"></i> GitHub</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/ashutoshbiswal24/" target="_blank" class="social-row">
+                                <span><i class="fab fa-linkedin"></i> LinkedIn</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <a href="https://www.kaggle.com/ashutoshbiswal56" target="_blank" class="social-row">
+                                <span><i class="fab fa-kaggle"></i> Kaggle</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <a href="https://x.com/AshutoshBi24" target="_blank" class="social-row">
+                                <span><i class="fab fa-x-twitter"></i> X (Twitter)</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
