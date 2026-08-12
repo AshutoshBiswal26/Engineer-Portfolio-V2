@@ -333,6 +333,262 @@ document.addEventListener('keydown', (e) => {
     window.__neuralLabSetRunning = (state) => { running = state; };
 })();
 
+// Lab Tabs (Neural Network <-> Transformer Architecture)
+(function initLabTabs() {
+    const tabs = document.querySelectorAll('.lab-tab');
+    const panels = document.querySelectorAll('.lab-tab-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.getAttribute('data-lab-tab');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            panels.forEach(panel => {
+                panel.classList.toggle('active', panel.id === `lab-tab-${target}`);
+            });
+
+            // Trigger a resize so any Three.js canvases in the newly shown panel size correctly
+            window.dispatchEvent(new Event('resize'));
+        });
+    });
+})();
+
+// Transformer Architecture - 3D Attention Visualization (Three.js)
+(function initTransformerLab() {
+    const container = document.getElementById('transformer-canvas');
+    if (!container || typeof THREE === 'undefined') return;
+
+    const tokenCount = 5;
+    const spacingX = 3.2;
+    let scene, camera, renderer;
+    let tokenNodes = [];
+    let attentionLines = [];
+    let running = false;
+    const state = { group: null, t: 0 };
+
+    function buildScene() {
+        scene = new THREE.Scene();
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+        camera.position.set(0, 2, 13);
+        camera.lookAt(0, 0, 0);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // Token embedding nodes arranged in a row
+        const geo = new THREE.SphereGeometry(0.24, 16, 16);
+        tokenNodes = [];
+        for (let i = 0; i < tokenCount; i++) {
+            const x = (i - (tokenCount - 1) / 2) * spacingX;
+            const material = new THREE.MeshBasicMaterial({ color: 0x818cf8, transparent: true, opacity: 0.85 });
+            const mesh = new THREE.Mesh(geo, material);
+            mesh.position.set(x, 0, 0);
+            group.add(mesh);
+            tokenNodes.push(mesh);
+        }
+
+        // Self-attention lines: every token attends to every other token
+        attentionLines = [];
+        for (let i = 0; i < tokenNodes.length; i++) {
+            for (let j = 0; j < tokenNodes.length; j++) {
+                if (i === j) continue;
+                const points = [tokenNodes[i].position.clone(), tokenNodes[j].position.clone()];
+                const g = new THREE.BufferGeometry().setFromPoints(points);
+                const mat = new THREE.LineBasicMaterial({ color: 0x334155, transparent: true, opacity: 0.12 });
+                const line = new THREE.Line(g, mat);
+                group.add(line);
+                attentionLines.push({ line, mat, from: i, to: j });
+            }
+        }
+
+        state.group = group;
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        state.t += 0.01;
+
+        if (state.group) {
+            state.group.rotation.y = Math.sin(state.t * 0.35) * 0.3;
+            state.group.rotation.x = Math.cos(state.t * 0.25) * 0.06;
+            state.group.position.y = Math.sin(state.t * 0.5) * 0.12;
+        }
+
+        tokenNodes.forEach((node, i) => {
+            const phase = state.t * 2 + i * 0.6;
+            const pulse = running ? (Math.sin(phase) * 0.5 + 0.5) : 0.15;
+            node.scale.setScalar(1 + pulse * 0.3);
+            node.material.opacity = 0.6 + pulse * 0.4;
+        });
+
+        attentionLines.forEach((conn, idx) => {
+            const phase = state.t * 2.5 - idx * 0.08;
+            const glow = running ? (Math.sin(phase) * 0.5 + 0.5) : 0;
+            conn.mat.opacity = 0.08 + glow * 0.4;
+            conn.mat.color.setHex(running && glow > 0.65 ? 0x22d3ee : 0x334155);
+        });
+
+        renderer.render(scene, camera);
+    }
+
+    function handleResize() {
+        if (!renderer || !camera || !container.clientWidth) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+
+    buildScene();
+    animate();
+    window.addEventListener('resize', handleResize);
+
+    window.__transformerLabSetRunning = (val) => { running = val; };
+})();
+
+// Transformer Hyperparameter Controls
+(function initTransformerControls() {
+    const headsSlider = document.getElementById('heads-slider');
+    if (!headsSlider) return;
+
+    const headsValue = document.getElementById('heads-value');
+    const embedSlider = document.getElementById('embed-slider');
+    const embedValue = document.getElementById('embed-value');
+    const depthSlider = document.getElementById('depth-slider');
+    const depthValue = document.getElementById('depth-value');
+    const runBtn = document.getElementById('run-transformer-btn');
+    const status = document.getElementById('transformer-status');
+
+    headsSlider.addEventListener('input', () => { headsValue.textContent = headsSlider.value; });
+    embedSlider.addEventListener('input', () => { embedValue.textContent = embedSlider.value; });
+    depthSlider.addEventListener('input', () => { depthValue.textContent = depthSlider.value; });
+
+    runBtn.addEventListener('click', () => {
+        status.classList.add('running');
+        status.innerHTML = '<span class="status-dot"></span> Status: Active';
+        if (window.__transformerLabSetRunning) window.__transformerLabSetRunning(true);
+
+        runBtn.disabled = true;
+        const originalHTML = runBtn.innerHTML;
+        runBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running Inference...';
+
+        setTimeout(() => {
+            status.classList.remove('running');
+            status.innerHTML = '<span class="status-dot"></span> Status: Idle';
+            if (window.__transformerLabSetRunning) window.__transformerLabSetRunning(false);
+            runBtn.disabled = false;
+            runBtn.innerHTML = originalHTML;
+        }, 2600);
+    });
+})();
+
+// Hero Background - 3D Floating Node Network (Three.js)
+(function initHero3DBackground() {
+    const container = document.getElementById('hero-3d-bg');
+    if (!container || typeof THREE === 'undefined') return;
+
+    const nodeCount = 26;
+    let scene, camera, renderer;
+    let nodeMeshes = [];
+    let linkLines = [];
+    let t = 0;
+
+    function buildScene() {
+        scene = new THREE.Scene();
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 100);
+        camera.position.set(0, 0, 20);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        const geo = new THREE.SphereGeometry(0.18, 12, 12);
+        const positions = [];
+
+        for (let i = 0; i < nodeCount; i++) {
+            const x = (Math.random() - 0.5) * 26;
+            const y = (Math.random() - 0.5) * 16;
+            const z = (Math.random() - 0.5) * 14;
+            const colorChoice = Math.random() > 0.7 ? 0x22d3ee : 0x818cf8;
+            const material = new THREE.MeshBasicMaterial({ color: colorChoice, transparent: true, opacity: 0.55 });
+            const mesh = new THREE.Mesh(geo, material);
+            mesh.position.set(x, y, z);
+            group.add(mesh);
+            nodeMeshes.push(mesh);
+            positions.push(mesh.position);
+        }
+
+        // Connect nearby nodes to form a loose network
+        linkLines = [];
+        for (let i = 0; i < positions.length; i++) {
+            for (let j = i + 1; j < positions.length; j++) {
+                if (positions[i].distanceTo(positions[j]) < 9) {
+                    const g = new THREE.BufferGeometry().setFromPoints([positions[i], positions[j]]);
+                    const mat = new THREE.LineBasicMaterial({ color: 0x334155, transparent: true, opacity: 0.15 });
+                    const line = new THREE.Line(g, mat);
+                    group.add(line);
+                    linkLines.push(line);
+                }
+            }
+        }
+
+        heroBgState.group = group;
+    }
+
+    const heroBgState = { group: null };
+
+    function animate() {
+        requestAnimationFrame(animate);
+        t += 0.002;
+
+        if (heroBgState.group) {
+            heroBgState.group.rotation.y = t * 0.5;
+            heroBgState.group.rotation.x = Math.sin(t * 0.6) * 0.1;
+        }
+
+        nodeMeshes.forEach((node, i) => {
+            node.position.y += Math.sin(t * 3 + i) * 0.002;
+        });
+
+        renderer.render(scene, camera);
+    }
+
+    function handleResize() {
+        if (!renderer || !camera || !container.clientWidth) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+
+    buildScene();
+    animate();
+    window.addEventListener('resize', handleResize);
+})();
+
 // Hyperparameter Controls
 (function initLabControls() {
     const lrSlider = document.getElementById('lr-slider');

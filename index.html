@@ -33,6 +33,7 @@
         <div class="hero-background">
             <div class="gradient-orb orb-1"></div>
             <div class="gradient-orb orb-2"></div>
+            <div id="hero-3d-bg" class="hero-3d-canvas"></div>
         </div>
         <div class="hero-content">
             <p class="greeting">Hello, I'm</p>
@@ -190,71 +191,151 @@
             <h2 class="section-title">Engineering Intelligence</h2>
             <p class="lab-intro">Instead of just listing projects, this is a dedicated sandbox to visualize and interact with the very systems behind the work above &mdash; a way to show not just training models, but building the infrastructure that makes them accessible and interpretable.</p>
 
-            <div class="lab-grid">
-                <div class="lab-panel lab-topology-panel">
-                    <div class="lab-panel-header">
-                        <h3><i class="fas fa-diagram-project"></i> Network Topology</h3>
-                        <span class="lab-status" id="lab-status"><span class="status-dot"></span> Status: Idle</span>
+            <div class="lab-tabs">
+                <button class="lab-tab active" data-lab-tab="network">Neural Network</button>
+                <button class="lab-tab" data-lab-tab="transformer">Transformer Architecture</button>
+            </div>
+
+            <!-- Neural Network Tab -->
+            <div class="lab-tab-panel active" id="lab-tab-network">
+                <div class="lab-grid">
+                    <div class="lab-panel lab-topology-panel">
+                        <div class="lab-panel-header">
+                            <h3><i class="fas fa-diagram-project"></i> Network Topology</h3>
+                            <span class="lab-status" id="lab-status"><span class="status-dot"></span> Status: Idle</span>
+                        </div>
+                        <div class="lab-canvas-wrapper">
+                            <div id="neural-canvas"></div>
+                            <div class="lab-layer-labels">
+                                <span>Input</span><span>Dense 1</span><span>Dense 2</span><span>Output</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="lab-canvas-wrapper">
-                        <div id="neural-canvas"></div>
-                        <div class="lab-layer-labels">
-                            <span>Input</span><span>Dense 1</span><span>Dense 2</span><span>Output</span>
+
+                    <div class="lab-panel lab-controls-panel">
+                        <h3><i class="fas fa-sliders-h"></i> Hyperparameters</h3>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Learning Rate</span><span class="control-value" id="lr-value">0.010</span></div>
+                            <input type="range" id="lr-slider" min="1" max="100" value="10" class="lab-slider">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Dropout</span><span class="control-value" id="dropout-value">0.2</span></div>
+                            <input type="range" id="dropout-slider" min="0" max="80" value="20" class="lab-slider">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Epochs</span><span class="control-value" id="epochs-value">50</span></div>
+                            <input type="range" id="epochs-slider" min="1" max="200" value="50" class="lab-slider">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Optimizer</span></div>
+                            <select id="optimizer-select" class="lab-select">
+                                <option value="Adam">Adam</option>
+                                <option value="SGD">SGD</option>
+                                <option value="RMSprop">RMSprop</option>
+                                <option value="AdamW">AdamW</option>
+                            </select>
+                        </div>
+
+                        <button id="run-inference-btn" class="btn btn-primary lab-run-btn">
+                            <i class="fas fa-play"></i> Run Inference
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lab-architecture">
+                    <h3 class="lab-architecture-title"><span class="title-bar"></span> Model Architecture</h3>
+                    <div class="architecture-grid">
+                        <div class="architecture-card">
+                            <div class="architecture-icon"><i class="fas fa-layer-group"></i></div>
+                            <h4>Topology</h4>
+                            <p>A custom-built Three.js visualization of a live feedforward network, rendering node activations across input, hidden, and output layers in real time.</p>
+                        </div>
+                        <div class="architecture-card">
+                            <div class="architecture-icon"><i class="fas fa-wave-square"></i></div>
+                            <h4>Activation</h4>
+                            <p>Dynamic activation pulses propagate across the network on each inference pass, set against a floating coordinate system that drifts with ambient environmental noise.</p>
+                        </div>
+                        <div class="architecture-card">
+                            <div class="architecture-icon"><i class="fas fa-sliders-h"></i></div>
+                            <h4>Loss Function</h4>
+                            <p>An interactive hyperparameter sidebar simulates model tuning &mdash; Learning Rate, Dropout, Epochs, and Optimizer &mdash; reinforcing hands-on optimization expertise.</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="lab-panel lab-controls-panel">
-                    <h3><i class="fas fa-sliders-h"></i> Hyperparameters</h3>
-
-                    <div class="control-group">
-                        <div class="control-label"><span>Learning Rate</span><span class="control-value" id="lr-value">0.010</span></div>
-                        <input type="range" id="lr-slider" min="1" max="100" value="10" class="lab-slider">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="control-label"><span>Dropout</span><span class="control-value" id="dropout-value">0.2</span></div>
-                        <input type="range" id="dropout-slider" min="0" max="80" value="20" class="lab-slider">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="control-label"><span>Epochs</span><span class="control-value" id="epochs-value">50</span></div>
-                        <input type="range" id="epochs-slider" min="1" max="200" value="50" class="lab-slider">
-                    </div>
-
-                    <div class="control-group">
-                        <div class="control-label"><span>Optimizer</span></div>
-                        <select id="optimizer-select" class="lab-select">
-                            <option value="Adam">Adam</option>
-                            <option value="SGD">SGD</option>
-                            <option value="RMSprop">RMSprop</option>
-                            <option value="AdamW">AdamW</option>
-                        </select>
-                    </div>
-
-                    <button id="run-inference-btn" class="btn btn-primary lab-run-btn">
-                        <i class="fas fa-play"></i> Run Inference
-                    </button>
-                </div>
             </div>
 
-            <div class="lab-architecture">
-                <h3 class="lab-architecture-title"><span class="title-bar"></span> Model Architecture</h3>
-                <div class="architecture-grid">
-                    <div class="architecture-card">
-                        <div class="architecture-icon"><i class="fas fa-layer-group"></i></div>
-                        <h4>Topology</h4>
-                        <p>A custom-built Three.js visualization of a live feedforward network, rendering node activations across input, hidden, and output layers in real time.</p>
+            <!-- Transformer Architecture Tab -->
+            <div class="lab-tab-panel" id="lab-tab-transformer">
+                <div class="lab-grid">
+                    <div class="lab-panel lab-topology-panel">
+                        <div class="lab-panel-header">
+                            <h3><i class="fas fa-diagram-project"></i> Attention Topology</h3>
+                            <span class="lab-status" id="transformer-status"><span class="status-dot"></span> Status: Idle</span>
+                        </div>
+                        <div class="lab-canvas-wrapper">
+                            <div id="transformer-canvas"></div>
+                            <div class="lab-layer-labels">
+                                <span>Tokens</span><span>Self-Attention</span><span>Feed-Forward</span><span>Output</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="architecture-card">
-                        <div class="architecture-icon"><i class="fas fa-wave-square"></i></div>
-                        <h4>Activation</h4>
-                        <p>Dynamic activation pulses propagate across the network on each inference pass, set against a floating coordinate system that drifts with ambient environmental noise.</p>
+
+                    <div class="lab-panel lab-controls-panel">
+                        <h3><i class="fas fa-sliders-h"></i> Hyperparameters</h3>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Attention Heads</span><span class="control-value" id="heads-value">8</span></div>
+                            <input type="range" id="heads-slider" min="1" max="16" value="8" class="lab-slider">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Embedding Dim</span><span class="control-value" id="embed-value">512</span></div>
+                            <input type="range" id="embed-slider" min="64" max="1024" step="64" value="512" class="lab-slider">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Block Depth</span><span class="control-value" id="depth-value">12</span></div>
+                            <input type="range" id="depth-slider" min="1" max="48" value="12" class="lab-slider">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label"><span>Activation Function</span></div>
+                            <select id="activation-select" class="lab-select">
+                                <option value="GeLU">GeLU</option>
+                                <option value="ReLU">ReLU</option>
+                                <option value="SwiGLU">SwiGLU</option>
+                                <option value="Sigmoid">Sigmoid</option>
+                            </select>
+                        </div>
+
+                        <button id="run-transformer-btn" class="btn btn-primary lab-run-btn">
+                            <i class="fas fa-play"></i> Run Inference
+                        </button>
                     </div>
-                    <div class="architecture-card">
-                        <div class="architecture-icon"><i class="fas fa-sliders-h"></i></div>
-                        <h4>Loss Function</h4>
-                        <p>An interactive hyperparameter sidebar simulates model tuning &mdash; Learning Rate, Dropout, Epochs, and Optimizer &mdash; reinforcing hands-on optimization expertise.</p>
+                </div>
+
+                <div class="lab-architecture">
+                    <h3 class="lab-architecture-title"><span class="title-bar"></span> Model Architecture</h3>
+                    <div class="architecture-grid">
+                        <div class="architecture-card">
+                            <div class="architecture-icon"><i class="fas fa-layer-group"></i></div>
+                            <h4>Self-Attention</h4>
+                            <p>Utilizing scaled dot-product attention to capture global dependencies across input sequences, with multiple heads attending to different representation subspaces.</p>
+                        </div>
+                        <div class="architecture-card">
+                            <div class="architecture-icon"><i class="fas fa-wave-square"></i></div>
+                            <h4>Feed-Forward</h4>
+                            <p>Position-wise networks consisting of two linear transformations and a non-linearity, applied independently to each token embedding.</p>
+                        </div>
+                        <div class="architecture-card">
+                            <div class="architecture-icon"><i class="fas fa-sliders-h"></i></div>
+                            <h4>Cross-Entropy</h4>
+                            <p>Optimized via label smoothing for next-token prediction and language modeling tasks across the full vocabulary distribution.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -301,6 +382,45 @@
                     <div class="project-impact">
                         <i class="fas fa-chart-line"></i>
                         <span>Strengthened automation systems, improved data completeness, and boosted operational efficiency with better audit trails and faster decision-making insights.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card featured">
+                <div class="project-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-label">AI/ML Solution</span>
+                        <h3>AI Project Estimation System using AWS Bedrock</h3>
+                    </div>
+                    <p class="project-description">An AI-powered project estimation system that automates effort and cost estimation for Solution Architects. Analyzes client requirement documents and generates detailed, week-by-week project estimates using AWS Bedrock's Nova 2 Lite model.</p>
+
+                    <div class="project-features">
+                        <div class="feature">
+                            <h4><i class="fas fa-file-import"></i> Multi-Format Document Ingestion</h4>
+                            <p>Extracts text from PDF, DOC, and TXT files &mdash; call scoping notes and requirement briefs &mdash; to feed structured, machine-readable content into the estimation pipeline.</p>
+                        </div>
+                        <div class="feature">
+                            <h4><i class="fas fa-robot"></i> Bedrock-Powered Estimate Generation</h4>
+                            <p>Integrates AWS Bedrock (Nova 2 Lite) with structured prompts enforcing role-wise rate cards, timelines, and estimation rules to produce consistent, detailed estimates.</p>
+                        </div>
+                        <div class="feature">
+                            <h4><i class="fas fa-cloud"></i> Serverless AI Pipeline</h4>
+                            <p>Built entirely on AWS Lambda, API Gateway, and S3 for a scalable, cost-efficient architecture optimized for real-world enterprise usage.</p>
+                        </div>
+                        <div class="feature">
+                            <h4><i class="fas fa-file-export"></i> Standardized Machine-Readable Output</h4>
+                            <p>Generates week-by-week project estimates in both JSON and CSV formats for easy downstream consumption by proposal and planning tools.</p>
+                        </div>
+                    </div>
+                    <div class="project-tech">
+                        <span>AWS Lambda</span><span>AWS Bedrock</span><span>Amazon Cognito</span><span>Amazon S3</span><span>API Gateway</span><span>Python</span><span>Serverless Framework</span>
+                    </div>
+                    <div class="project-impact">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reduced manual estimation effort for Solution Architects and improved estimation consistency and turnaround time.</span>
                     </div>
                 </div>
             </div>
