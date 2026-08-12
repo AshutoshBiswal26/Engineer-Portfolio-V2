@@ -1247,6 +1247,12 @@ body {
     color: var(--primary);
 }
 
+.social-row .x-icon {
+    margin-right: 10px;
+    color: var(--primary);
+    vertical-align: -2px;
+}
+
 .social-row:hover {
     color: var(--secondary);
     padding-left: 8px;
